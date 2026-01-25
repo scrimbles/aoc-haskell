@@ -34,11 +34,11 @@ zeroDetector :: ZeroCounter
 zeroDetector d r = isZero $ plus' d r
 
 zeroCounter :: ZeroCounter
-zeroCounter (Dial {position, counter}) rot = (loops rot) + (passesZero position rot)
+zeroCounter dial rot = (loops rot) + (passesZero dial rot)
 
-passesZero :: Int -> Rotation -> Int
-passesZero pos (LeftDir dist) = if pos /= 0 && pos <= (dist `mod` 100) then 1 else 0
-passesZero pos (RightDir dist) = if pos /= 0 && (100 - pos) <= (dist `mod` 100) then 1 else 0
+passesZero :: Dial -> Rotation -> Int
+passesZero (Dial {position}) (LeftDir dist) = if position /= 0 && position <= (dist `mod` 100) then 1 else 0
+passesZero (Dial {position}) (RightDir dist) = if position /= 0 && (100 - position) <= (dist `mod` 100) then 1 else 0
 
 loops ::Rotation -> Int
 loops (LeftDir n) = n `div` 100
