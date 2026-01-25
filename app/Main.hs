@@ -1,5 +1,6 @@
 import Options.Applicative
 import Data.Monoid (mconcat)
+import qualified Day1
 
 -- 1. Define a data type to hold the parsed arguments
 data Options = Options
@@ -24,15 +25,17 @@ sampleParser = Options
     <> metavar "INT"
     <> help "Which part [1,2] to solve for for the day.")
 
-solve :: Options -> Either String Integer
-solve (Options {day = 1, part = 1}) = Right 0 -- example for breaking out solvers
-solve _ = Left "Not implemented"
+solve :: Options -> IO ()
+solve (Options {day = 1, part = 1}) = do
+  solution <- Day1.part1 "app/puzzles/day_01/input.txt"
+  print solution
+solve _ = putStrLn "Not implemented"
 
 -- 3. Define the program's main action
 main :: IO ()
-main = execParser opts >>= putStrLn . show . solve
-  where
-    opts = info (sampleParser <* helper)
+main = do
+    parsedOpts <- execParser (info (sampleParser <* helper)
       ( fullDesc
      <> progDesc "Advent of Code solver for 2025."
-     <> header "aoc-haskell - AoC Solutions in Haskell - 0.1.0.0" )
+     <> header "aoc-haskell - AoC Solutions in Haskell - 0.1.0.0" ))
+    solve parsedOpts
