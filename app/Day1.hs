@@ -1,5 +1,6 @@
 module Day1
 ( part1
+, part2
 ) where
 
 import Data.Maybe
@@ -11,25 +12,54 @@ data Dial = Dial
 
 data Rotation = LeftDir Int | RightDir Int deriving Show
 
-plus :: Dial -> Rotation -> Dial
-plus (Dial { position, counter }) (LeftDir val) = Dial { position=pos, counter=(counter + zero)}
-    where rawPos = (position - val) `mod` 100
-          pos = if rawPos < 0 then rawPos + 100 else rawPos
-          zero = if pos == 0 then 1 else 0
+isZero :: Int -> Int
+isZero x
+  | x == 0 = 1
+  | otherwise = 0
 
-plus (Dial { position, counter}) (RightDir val) = Dial { position=pos, counter=(counter + zero)}
-    where pos = (position + val) `mod` 100
-          zero = if pos == 0 then 1 else 0
+type ZeroCounter = Dial -> Rotation -> Int
+plus :: ZeroCounter -> Dial -> Rotation -> Dial
+plus z dial rot =
+  Dial { position=newPos, counter=newCount } 
+  where newPos = (plus' dial rot)
+        newCount = (counter dial) + (z dial rot)
+
+plus' :: Dial -> Rotation -> Int
+plus' (Dial {position}) (LeftDir dist) =
+  if pos < 0 then pos + 100 else pos
+  where pos = (position - dist) `mod` 100
+plus' (Dial {position}) (RightDir dist) = (position + dist) `mod` 100
+
+zeroDetector :: ZeroCounter
+zeroDetector d r = isZero $ plus' d r
+
+zeroCounter :: ZeroCounter
+zeroCounter (Dial {position, counter}) rot = (loops rot) + (passesZero position rot)
+
+passesZero :: Int -> Rotation -> Int
+passesZero pos (LeftDir dist) = if pos /= 0 && pos <= (dist `mod` 100) then 1 else 0
+passesZero pos (RightDir dist) = if pos /= 0 && (100 - pos) <= (dist `mod` 100) then 1 else 0
+
+loops ::Rotation -> Int
+loops (LeftDir n) = n `div` 100
+loops (RightDir n) = n `div` 100
+
 
 parseRotation :: String -> Maybe Rotation
 parseRotation ('L':numStr) = Just (LeftDir (read numStr))
 parseRotation ('R':numStr) = Just (RightDir (read numStr))
 parseRotation _ = Nothing 
 
-part1 :: String -> IO Int
-part1 filename = do
+solve :: (Dial -> Rotation -> Dial) -> String -> IO Int
+solve f filename = do
     contents <- readFile filename
     let ls = lines contents
     let rs = map parseRotation ls
     let rotations = catMaybes rs
-    return $ counter $ foldl plus Dial {position=50, counter=0} rotations
+    return $ counter $ foldl f Dial {position=50, counter=0} rotations
+
+part1 :: String -> IO Int
+part1 = solve (plus zeroDetector)
+
+part2 :: String -> IO Int
+part2 = solve (plus zeroCounter)

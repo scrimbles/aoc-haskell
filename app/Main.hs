@@ -29,6 +29,9 @@ solve :: Options -> IO ()
 solve (Options {day = 1, part = 1}) = do
   solution <- Day1.part1 "app/puzzles/day_01/input.txt"
   print solution
+solve (Options {day=1, part=2}) = do
+  solution <- Day1.part2 "app/puzzles/day_01/input.txt"
+  print solution
 solve _ = putStrLn "Not implemented"
 
 -- 3. Define the program's main action
