@@ -1,6 +1,7 @@
 import Options.Applicative
-import Data.Monoid (mconcat)
+-- import Data.Monoid (mconcat)
 import qualified Day1
+import qualified Day2
 
 -- 1. Define a data type to hold the parsed arguments
 data Options = Options
@@ -31,6 +32,12 @@ solve (Options {day = 1, part = 1}) = do
   print solution
 solve (Options {day=1, part=2}) = do
   solution <- Day1.part2 "app/puzzles/day_01/input.txt"
+  print solution
+solve (Options {day=2, part=1}) = do
+  solution <- Day2.part1 "app/puzzles/day_02/input.txt"
+  print solution
+solve (Options {day=2, part=2}) = do
+  solution <- Day2.part2 "app/puzzles/day_02/input.txt"
   print solution
 solve _ = putStrLn "Not implemented"
 
