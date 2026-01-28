@@ -1,16 +1,10 @@
 import Options.Applicative
--- import Data.Monoid (mconcat)
 import qualified Day1
 import qualified Day2
 
--- 1. Define a data type to hold the parsed arguments
-data Options = Options
-  { day   :: Integer
-  , part  :: Integer
-    -- flags and other options can be added here
-  }
+data Options where
+  Options :: {day :: Integer, part :: Integer} -> Options
 
--- 2. Define the parser for your options
 sampleParser :: Parser Options
 sampleParser = Options
   <$> option auto
@@ -26,19 +20,19 @@ sampleParser = Options
     <> metavar "INT"
     <> help "Which part [1,2] to solve for for the day.")
 
+getInput :: Int -> [Char]
+getInput day = "app/puzzles/day_"
+  ++ (if day < 10 then "0" ++ show day else show day)
+  ++ "/input.txt"
+
+solve' :: (String -> IO Int) -> Int -> IO ()
+solve' f day = ((f.getInput) day) >>= print
+
 solve :: Options -> IO ()
-solve (Options {day = 1, part = 1}) = do
-  solution <- Day1.part1 "app/puzzles/day_01/input.txt"
-  print solution
-solve (Options {day=1, part=2}) = do
-  solution <- Day1.part2 "app/puzzles/day_01/input.txt"
-  print solution
-solve (Options {day=2, part=1}) = do
-  solution <- Day2.part1 "app/puzzles/day_02/input.txt"
-  print solution
-solve (Options {day=2, part=2}) = do
-  solution <- Day2.part2 "app/puzzles/day_02/input.txt"
-  print solution
+solve (Options {day=1, part=1}) = solve' Day1.part1 1
+solve (Options {day=1, part=2}) = solve' Day1.part2 1
+solve (Options {day=2, part=1}) = solve' Day2.part1 2
+solve (Options {day=2, part=2}) = solve' Day2.part2 2
 solve _ = putStrLn "Not implemented"
 
 -- 3. Define the program's main action
