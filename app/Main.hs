@@ -1,6 +1,7 @@
 import Options.Applicative
 import qualified Day1
 import qualified Day2
+import qualified Day3
 
 data Options where
   Options :: {day :: Integer, part :: Integer} -> Options
@@ -33,6 +34,8 @@ solve (Options {day=1, part=1}) = solve' Day1.part1 1
 solve (Options {day=1, part=2}) = solve' Day1.part2 1
 solve (Options {day=2, part=1}) = solve' Day2.part1 2
 solve (Options {day=2, part=2}) = solve' Day2.part2 2
+solve (Options {day=3, part=1}) = solve' Day3.part1 3
+solve (Options {day=3, part=2}) = solve' Day3.part2 3
 solve _ = putStrLn "Not implemented"
 
 -- 3. Define the program's main action
