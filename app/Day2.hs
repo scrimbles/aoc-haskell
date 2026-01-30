@@ -21,17 +21,16 @@ invalid' s n
         where chunks = chunksOf n s
               firstChunk = head chunks
 
-solve :: (String -> Bool) -> String -> IO Int
-solve f filename = do
-    contents <- readFile filename
+solve :: (String -> Bool) -> String -> Int
+solve f contents = do
     let rangeStrs = splitOn "," contents
     let rangePairs = map (map read) $ map (splitOn "-") rangeStrs :: [[Int]]
     let ranges = map (\p -> [p!!0..p!!1]) rangePairs
     let invalidIds = filter (f.show) $ concat ranges
-    return $ sum $ invalidIds
+    sum invalidIds
 
-part1 :: String -> IO Int
+part1 :: String -> Int
 part1 = solve doubleSeq
 
-part2 :: String -> IO Int
+part2 :: String -> Int
 part2 = solve invalid

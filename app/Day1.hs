@@ -50,16 +50,15 @@ parseRotation ('L':numStr) = Just (LeftDir (read numStr))
 parseRotation ('R':numStr) = Just (RightDir (read numStr))
 parseRotation _ = Nothing 
 
-solve :: (Dial -> Rotation -> Dial) -> String -> IO Int
-solve f filename = do
-    contents <- readFile filename
+solve :: (Dial -> Rotation -> Dial) -> String -> Int
+solve f contents = do
     let ls = lines contents
     let rs = map parseRotation ls
     let rotations = catMaybes rs
-    return $ counter $ foldl f Dial {position=50, counter=0} rotations
+    counter $ foldl f Dial {position=50, counter=0} rotations
 
-part1 :: String -> IO Int
+part1 :: String -> Int
 part1 = solve (plus zeroDetector)
 
-part2 :: String -> IO Int
+part2 :: String -> Int
 part2 = solve (plus zeroCounter)

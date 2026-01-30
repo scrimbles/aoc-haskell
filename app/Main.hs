@@ -21,13 +21,13 @@ sampleParser = Options
     <> metavar "INT"
     <> help "Which part [1,2] to solve for for the day.")
 
-getInput :: Int -> [Char]
-getInput day = "app/puzzles/day_"
+getFilename :: Int -> String
+getFilename day = "app/puzzles/day_"
   ++ (if day < 10 then "0" ++ show day else show day)
   ++ "/input.txt"
 
-solve' :: (String -> IO Int) -> Int -> IO ()
-solve' f day = ((f.getInput) day) >>= print
+solve' :: (String -> Int) -> Int -> IO ()
+solve' f day = (readFile (getFilename day)) >>= print.f
 
 solve :: Options -> IO ()
 solve (Options {day=1, part=1}) = solve' Day1.part1 1
