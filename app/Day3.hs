@@ -33,17 +33,22 @@ maxJoltage n digits = (++) [largest] $ maxJoltage digitsRem $ drop (idx+1) digit
           possibles = (length digits) - digitsRem
           digitsRem = n-1
 
-solve :: Int -> String -> IO Int
-solve n filename = do
-    contents <- readFile filename
-    let bankStrings = lines contents
+place :: (Int, Int) -> Int
+place (p, d) = d*(10^p)
+
+digify :: [Int] -> Int
+digify = (sum . (map place) . (zip [0..]) . reverse)
+
+solve :: Int -> String -> Int
+solve n fileContents = do
+    let bankStrings = lines fileContents
     let banks = map (map digitToInt) bankStrings
     let joltageSeqs = map (maxJoltage n) banks
-    let joltages = map read $ map concat $ map (map show) joltageSeqs :: [Int]
-    return $ sum joltages
+    let joltages = map digify joltageSeqs :: [Int]
+    sum joltages
 
-part1 :: String -> IO Int
+part1 :: String -> Int
 part1 = solve 2
 
-part2 :: String -> IO Int
+part2 :: String -> Int
 part2 = solve 12
