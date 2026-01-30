@@ -51,11 +51,7 @@ parseRotation ('R':numStr) = Just (RightDir (read numStr))
 parseRotation _ = Nothing 
 
 solve :: (Dial -> Rotation -> Dial) -> String -> Int
-solve f contents = do
-    let ls = lines contents
-    let rs = map parseRotation ls
-    let rotations = catMaybes rs
-    counter $ foldl f Dial {position=50, counter=0} rotations
+solve f contents = counter $ foldl f Dial {position=50, counter=0} $ catMaybes $ map parseRotation $ lines contents
 
 part1 :: String -> Int
 part1 = solve (plus zeroDetector)
