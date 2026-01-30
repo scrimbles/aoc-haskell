@@ -17,17 +17,23 @@ invalid s = foldl (||) False $ map (invalid' s) [1..l]
 invalid' :: String -> Int -> Bool
 invalid' s n
     | (length s) `mod` n /= 0 = False
-    | otherwise = foldl (&&) True $ map ((==) firstChunk) chunks
+    | otherwise = case chunks of
+                      (firstChunk:_) -> all (== firstChunk) chunks
+                      [] -> False
         where chunks = chunksOf n s
-              firstChunk = head chunks
+
+getRangePairs :: String -> [[Int]]
+getRangePairs contents = map (map read) $ map (splitOn "-") $ splitOn "," contents
+
+range :: [Int] -> [Int]
+range (start:end:[]) = [start..end]
+range _ = []
+
+getInvalidIds :: [[Int]] -> [Int]
+getInvalidIds rangePairs = concat $ map range rangePairs
 
 solve :: (String -> Bool) -> String -> Int
-solve f contents = do
-    let rangeStrs = splitOn "," contents
-    let rangePairs = map (map read) $ map (splitOn "-") rangeStrs :: [[Int]]
-    let ranges = map (\p -> [p!!0..p!!1]) rangePairs
-    let invalidIds = filter (f.show) $ concat ranges
-    sum invalidIds
+solve f input = sum $ filter (f.show) $ getInvalidIds $ getRangePairs input
 
 part1 :: String -> Int
 part1 = solve doubleSeq
