@@ -27,7 +27,7 @@ getFilename day = "app/puzzles/day_"
   ++ "/input.txt"
 
 solve' :: (String -> Int) -> Int -> IO ()
-solve' f day = (readFile (getFilename day)) >>= print.f
+solve' f day = (readFile.getFilename) day >>= print.f
 
 solve :: Options -> IO ()
 solve (Options {day=1, part=1}) = solve' Day1.part1 1
